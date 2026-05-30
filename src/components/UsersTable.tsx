@@ -12,7 +12,7 @@ import {
 import { Link as RouterLink } from 'react-router-dom'
 import type { User } from '../api/types'
 
-export function UsersTable({ users }: { users: User[] }) {
+export function UsersTable({ users }: Readonly<{ users: User[] }>) {
   if (users.length === 0) {
     return <Typography color="text.secondary">No users</Typography>
   }
@@ -23,8 +23,10 @@ export function UsersTable({ users }: { users: User[] }) {
         <TableHead>
           <TableRow>
             <TableCell width={80}>ID</TableCell>
-            <TableCell>Name</TableCell>
+            <TableCell>First name</TableCell>
+            <TableCell>Last name</TableCell>
             <TableCell>Email</TableCell>
+            <TableCell width={80}>Age</TableCell>
             <TableCell width={160}>Action</TableCell>
           </TableRow>
         </TableHead>
@@ -32,8 +34,10 @@ export function UsersTable({ users }: { users: User[] }) {
           {users.map((u) => (
             <TableRow key={u.id} hover>
               <TableCell>{u.id}</TableCell>
-              <TableCell>{u.name}</TableCell>
+              <TableCell>{u.first_name}</TableCell>
+              <TableCell>{u.last_name}</TableCell>
               <TableCell>{u.email}</TableCell>
+              <TableCell>{u.age}</TableCell>
               <TableCell>
                 <Link component={RouterLink} to={`/users/${u.id}`}>
                   View

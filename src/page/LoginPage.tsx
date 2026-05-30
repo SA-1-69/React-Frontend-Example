@@ -1,9 +1,22 @@
-import { useMemo, useState } from 'react'
-import { Box, Button, Card, CardContent, Container, TextField, Typography } from '@mui/material'
+import { useMemo, useState, type SyntheticEvent } from 'react'
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  IconButton,
+  InputAdornment,
+  Link,
+  TextField,
+  Typography,
+} from '@mui/material'
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { ApiError } from '../api/http'
 import { ErrorAlert } from '../components/ErrorAlert'
 import { useAuth } from '../auth/useAuth'
+import sutEngineeringLogo from '../assets/sut_engineering.png'
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -11,18 +24,19 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const canSubmit = useMemo(() => email.trim().length > 0 && password.length > 0, [email, password])
 
-  async function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
     setSubmitting(true)
 
     try {
-      await login({ email, password })
+      await login({ email: email.trim(), password })
       navigate('/profile', { replace: true })
     } catch (err) {
       if (err instanceof ApiError) {
@@ -36,14 +50,20 @@ export default function LoginPage() {
   }
 
   return (
-    <Container maxWidth="sm" sx={{ py: 8 }}>
-      <Card variant="outlined">
+    <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center', bgcolor: 'grey.100', p: 3 }}>
+      <Card variant="outlined" sx={{ width: '100%', maxWidth: 420 }}>
         <CardContent sx={{ p: 4 }}>
-          <Typography variant="h5" sx={{ mb: 1 }}>
+          <Box sx={{ display: 'grid', justifyItems: 'center', mb: 2 }}>
+            <Box
+              component="img"
+              src={sutEngineeringLogo}
+              alt="SUT Institute of Engineering"
+              sx={{ height: 44, width: 'auto' }}
+            />
+          </Box>
+
+          <Typography variant="h6" sx={{ textAlign: 'center', mb: 2 }}>
             Login
-          </Typography>
-          <Typography color="text.secondary" sx={{ mb: 3 }}>
-            Sign in with your account
           </Typography>
 
           <ErrorAlert message={error} />
@@ -53,7 +73,7 @@ export default function LoginPage() {
               label="Email"
               type="email"
               fullWidth
-              margin="normal"
+              margin="dense"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
@@ -61,13 +81,28 @@ export default function LoginPage() {
             />
             <TextField
               label="Password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               fullWidth
-              margin="normal"
+              margin="dense"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
               required
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                        edge="end"
+                        onClick={() => setShowPassword((s) => !s)}
+                      >
+                        {showPassword ? <VisibilityOffOutlinedIcon /> : <VisibilityOutlinedIcon />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
             />
 
             <Button
@@ -77,20 +112,20 @@ export default function LoginPage() {
               sx={{ mt: 2 }}
               disabled={!canSubmit || submitting}
             >
-              {submitting ? 'Signing in…' : 'Sign in'}
+              {submitting ? 'Logging in…' : 'Log in'}
             </Button>
 
-            <Button
+            <Link
               component={RouterLink}
               to="/register"
-              fullWidth
-              sx={{ mt: 1 }}
+              underline="hover"
+              sx={{ display: 'inline-block', mt: 1.5, fontSize: 13 }}
             >
-              Create an account
-            </Button>
+              Or signup now !
+            </Link>
           </Box>
         </CardContent>
       </Card>
-    </Container>
+    </Box>
   )
 }

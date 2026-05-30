@@ -52,6 +52,30 @@ export default function UserDetailPage() {
     }
   }, [token, id])
 
+  let content = <Alert severity="warning">Not found</Alert>
+  if (loading) {
+    content = <Alert severity="info">Loading…</Alert>
+  } else if (user) {
+    content = (
+      <Card variant="outlined">
+        <CardContent>
+          <Typography variant="h6" sx={{ mb: 1 }}>
+            {user.first_name} {user.last_name}
+          </Typography>
+          <Typography color="text.secondary">Email: {user.email}</Typography>
+          <Typography color="text.secondary">ID: {user.id}</Typography>
+          <Typography color="text.secondary">Age: {user.age}</Typography>
+          <Typography color="text.secondary" sx={{ mt: 2 }}>
+            Created: {new Date(user.created_at).toLocaleString()}
+          </Typography>
+          <Typography color="text.secondary">
+            Updated: {new Date(user.updated_at).toLocaleString()}
+          </Typography>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <Stack spacing={2}>
       <Link component={RouterLink} to="/users">
@@ -62,27 +86,7 @@ export default function UserDetailPage() {
 
       <ErrorAlert message={error} />
 
-      {loading ? (
-        <Alert severity="info">Loading…</Alert>
-      ) : user ? (
-        <Card variant="outlined">
-          <CardContent>
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              {user.name}
-            </Typography>
-            <Typography color="text.secondary">Email: {user.email}</Typography>
-            <Typography color="text.secondary">ID: {user.id}</Typography>
-            <Typography color="text.secondary" sx={{ mt: 2 }}>
-              Created: {new Date(user.created_at).toLocaleString()}
-            </Typography>
-            <Typography color="text.secondary">
-              Updated: {new Date(user.updated_at).toLocaleString()}
-            </Typography>
-          </CardContent>
-        </Card>
-      ) : (
-        <Alert severity="warning">Not found</Alert>
-      )}
+      {content}
     </Stack>
   )
 }

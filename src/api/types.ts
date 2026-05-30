@@ -15,8 +15,12 @@ export type ApiEnvelope<T> = ApiSuccess<T> | ApiErrorBody
 
 export type User = {
   id: number
-  name: string
+  first_name: string
+  last_name: string
   email: string
+  age: number
+  birth_day: string | null
+  gender_id: number | null
   created_at: string
   updated_at: string
 }
@@ -27,9 +31,13 @@ export type AuthResponse = {
 }
 
 export type RegisterRequest = {
-  name: string
+  first_name: string
+  last_name: string
   email: string
   password: string
+  age?: number
+  birth_day?: string
+  gender_id?: number
 }
 
 export type LoginRequest = {
@@ -38,7 +46,10 @@ export type LoginRequest = {
 }
 
 export type UpdateProfileRequest = {
-  name?: string
+  first_name?: string
+  last_name?: string
   email?: string
   password?: string
+  age?: number
+  birth_day?: string
 }

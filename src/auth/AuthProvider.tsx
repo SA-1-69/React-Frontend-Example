@@ -10,7 +10,19 @@ function applyAuthResponse(res: AuthResponse): { token: string; user: User } {
   return { token: res.token, user: res.user }
 }
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+function dateOnlyToRfc3339Utc(dateOnly: string): string | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateOnly)
+  if (!match) return null
+
+  const year = Number(match[1])
+  const monthIndex = Number(match[2]) - 1
+  const day = Number(match[3])
+  const date = new Date(Date.UTC(year, monthIndex, day))
+  if (Number.isNaN(date.getTime())) return null
+  return date.toISOString()
+}
+
+export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem(TOKEN_STORAGE_KEY))
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -40,7 +52,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const next = applyAuthResponse(res)
     localStorage.setItem(TOKEN_STORAGE_KEY, next.token)
     setToken(next.token)
-    setUser(next.user)
+
+    let finalUser = next.user
+    if (payload.birth_day) {
+      const rfc3339 = dateOnlyToRfc3339Utc(payload.birth_day)
+      if (rfc3339) {
+        try {
+          finalUser = await usersApi.updateProfile(next.token, { birth_day: rfc3339 })
+        } catch {
+          // Best-effort: keep account created + logged in even if birthday save fails.
+        }
+      }
+    }
+
+    setUser(finalUser)
   }, [])
 
   const updateProfile = useCallback(
