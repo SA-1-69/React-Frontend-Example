@@ -52,4 +52,5 @@ export type UpdateProfileRequest = {
   password?: string
   age?: number
   birth_day?: string
+  gender_id?: number
 }

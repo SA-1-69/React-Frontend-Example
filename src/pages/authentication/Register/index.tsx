@@ -14,10 +14,10 @@ import {
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
-import { ApiError } from '../api/http'
-import { ErrorAlert } from '../components/ErrorAlert'
-import { useAuth } from '../auth/useAuth'
-import sutEngineeringLogo from '../assets/sut_engineering.png'
+import { ApiError } from '../../../services/https'
+import { ErrorAlert } from '../../../components/ErrorAlert'
+import { useAuth } from '../../../auth/useAuth'
+import sutEngineeringLogo from '../../../assets/sut_engineering.png'
 
 export default function RegisterPage() {
   const navigate = useNavigate()

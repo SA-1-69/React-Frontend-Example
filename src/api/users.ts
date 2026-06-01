@@ -1,5 +1,5 @@
 import type { UpdateProfileRequest, User } from './types'
-import { apiFetch } from './http'
+import { apiFetch } from '../services/https'
 
 export function getAllUsers(token: string): Promise<User[]> {
   return apiFetch<User[]>('/api/v1/users', { token })

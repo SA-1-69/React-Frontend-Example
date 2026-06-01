@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Alert, Card, CardContent, Link, Stack, Typography } from '@mui/material'
 import { Link as RouterLink, useParams } from 'react-router-dom'
-import type { User } from '../api/types'
-import { ApiError } from '../api/http'
-import { getUserById } from '../api/users'
-import { ErrorAlert } from '../components/ErrorAlert'
-import { useAuth } from '../auth/useAuth'
+import type { User } from '../../../api/types'
+import { ApiError } from '../../../services/https'
+import { getUserById } from '../../../api/users'
+import { ErrorAlert } from '../../../components/ErrorAlert'
+import { useAuth } from '../../../auth/useAuth'
 
-export default function UserDetailPage() {
+export default function CustomerDetailPage() {
   const { token } = useAuth()
   const params = useParams()
   const id = Number(params.id)

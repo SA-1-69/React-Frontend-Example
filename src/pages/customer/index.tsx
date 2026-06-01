@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
-import { Alert, Stack, Typography } from '@mui/material'
-import type { User } from '../api/types'
-import { ApiError } from '../api/http'
-import { getAllUsers } from '../api/users'
-import { ErrorAlert } from '../components/ErrorAlert'
-import { UsersTable } from '../components/UsersTable'
-import { useAuth } from '../auth/useAuth'
+import { Alert, Button, Stack, Typography } from '@mui/material'
+import { Link as RouterLink } from 'react-router-dom'
+import type { User } from '../../api/types'
+import { ApiError } from '../../services/https'
+import { getAllUsers } from '../../api/users'
+import { ErrorAlert } from '../../components/ErrorAlert'
+import { UsersTable } from '../../components/UsersTable'
+import { useAuth } from '../../auth/useAuth'
 
-export default function UsersPage() {
+export default function CustomersPage() {
   const { token } = useAuth()
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
@@ -45,7 +46,16 @@ export default function UsersPage() {
 
   return (
     <Stack spacing={2}>
-      <Typography variant="h5">All Users</Typography>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={1}
+        sx={{ alignItems: { sm: 'center' }, justifyContent: 'space-between' }}
+      >
+        <Typography variant="h5">All Users</Typography>
+        <Button variant="contained" component={RouterLink} to="/users/new">
+          Add user
+        </Button>
+      </Stack>
       <ErrorAlert message={error} />
       {loading ? <Alert severity="info">Loading…</Alert> : <UsersTable users={users} />}
     </Stack>

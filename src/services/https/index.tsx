@@ -1,13 +1,10 @@
-import type { ApiEnvelope } from './types'
+import type { ApiEnvelope } from '../../api/types'
 
 const DEFAULT_BASE_URL = ''
 
 export function getApiBaseUrl(): string {
   const fromEnv = import.meta.env.VITE_API_BASE_URL as string | undefined
-  return (fromEnv && fromEnv.trim().length > 0 ? fromEnv : DEFAULT_BASE_URL).replace(
-    /\/$/,
-    '',
-  )
+  return (fromEnv && fromEnv.trim().length > 0 ? fromEnv : DEFAULT_BASE_URL).replace(/\/$/, '')
 }
 
 export class ApiError extends Error {
@@ -38,6 +35,7 @@ export async function apiFetch<T>(
   },
 ): Promise<T> {
   const method = options?.method ?? 'GET'
+
   const headers: Record<string, string> = {
     Accept: 'application/json',
   }
@@ -47,6 +45,7 @@ export async function apiFetch<T>(
   }
 
   let body: string | undefined
+
   if (options?.body !== undefined) {
     headers['Content-Type'] = 'application/json'
     body = JSON.stringify(options.body)
@@ -59,11 +58,13 @@ export async function apiFetch<T>(
     signal: options?.signal,
   })
 
+  // No Content
   if (res.status === 204) {
     return undefined as T
   }
 
   let json: ApiEnvelope<T> | undefined
+
   try {
     json = (await res.json()) as ApiEnvelope<T>
   } catch {
@@ -77,7 +78,9 @@ export async function apiFetch<T>(
         : `Request failed (${res.status})`
 
     const detail =
-      json && 'success' in json && json.success === false ? json.error.detail : undefined
+      json && 'success' in json && json.success === false
+        ? json.error.detail
+        : undefined
 
     throw new ApiError(message, res.status, detail)
   }
