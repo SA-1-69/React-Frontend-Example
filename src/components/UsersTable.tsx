@@ -10,7 +10,7 @@ import {
   Link,
 } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
-import type { User } from '../api/types'
+import type { User } from '../interface/IUserInterface'
 
 export function UsersTable({ users }: Readonly<{ users: User[] }>) {
   if (users.length === 0) {

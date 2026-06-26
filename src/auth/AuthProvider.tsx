@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
-import type { AuthResponse, LoginRequest, RegisterRequest, UpdateProfileRequest, User } from '../api/types'
-import * as authApi from '../api/auth'
-import * as usersApi from '../api/users'
+import type { AuthResponse, LoginRequest, RegisterRequest } from '../interface/IAuthInterface'
+import type { UpdateProfileRequest, User } from '../interface/IUserInterface'
+import * as authApi from '../services/https/auth'
+import * as usersApi from '../services/https/users'
 import { AuthContext, type AuthContextValue } from './AuthContext'
 
 const TOKEN_STORAGE_KEY = 'auth_token'

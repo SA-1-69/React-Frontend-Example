@@ -1,5 +1,6 @@
 import { createContext } from 'react'
-import type { LoginRequest, RegisterRequest, UpdateProfileRequest, User } from '../api/types'
+import type { LoginRequest, RegisterRequest } from '../interface/IAuthInterface'
+import type { UpdateProfileRequest, User } from '../interface/IUserInterface'
 
 export type AuthState = {
   token: string | null

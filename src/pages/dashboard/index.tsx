@@ -20,7 +20,7 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import { ApiError } from '../../services/https'
 import { ErrorAlert } from '../../components/ErrorAlert'
 import { useAuth } from '../../auth/useAuth'
-import type { User } from '../../api/types'
+import type { User } from '../../interface/IUserInterface'
 
 function toDateOnly(value: string | null): string {
   if (!value) return ''

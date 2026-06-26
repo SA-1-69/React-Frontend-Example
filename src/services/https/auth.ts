@@ -1,5 +1,6 @@
-import type { AuthResponse, LoginRequest, RegisterRequest, User } from './types'
-import { apiFetch } from '../services/https'
+import type { AuthResponse, LoginRequest, RegisterRequest } from '../../interface/IAuthInterface'
+import type { User } from '../../interface/IUserInterface'
+import { apiFetch } from './index'
 
 export function register(payload: RegisterRequest): Promise<AuthResponse> {
   return apiFetch<AuthResponse>('/api/v1/auth/register', {

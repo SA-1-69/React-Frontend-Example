@@ -6,9 +6,6 @@ import MiniLayout from '../layout/MiniLayout'
 import LoginPage from '../pages/authentication/Login'
 import RegisterPage from '../pages/authentication/Register'
 import DashboardPage from '../pages/dashboard'
-import CustomersPage from '../pages/customer'
-import CreateCustomerPage from '../pages/customer/create'
-import CustomerDetailPage from '../pages/customer/edit'
 import NotFoundPage from '../pages/not-found'
 
 function HomeRedirect() {
@@ -31,9 +28,6 @@ export function MainRoutes() {
         <Route element={<ProtectedRoute />}>
           <Route element={<FullLayout />}>
             <Route path="/profile" element={<DashboardPage />} />
-            <Route path="/users" element={<CustomersPage />} />
-            <Route path="/users/new" element={<CreateCustomerPage />} />
-            <Route path="/users/:id" element={<CustomerDetailPage />} />
           </Route>
         </Route>
 

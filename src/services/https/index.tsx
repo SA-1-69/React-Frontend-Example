@@ -1,4 +1,4 @@
-import type { ApiEnvelope } from '../../api/types'
+import type { ApiEnvelope } from '../../interface/IApiInterface'
 
 const DEFAULT_BASE_URL = ''
 

@@ -32,9 +32,6 @@ export function AppShell() {
           <Button color="inherit" component={RouterLink} to="/profile">
             Profile
           </Button>
-          <Button color="inherit" component={RouterLink} to="/users">
-            Users
-          </Button>
           <Button
             color="inherit"
             onClick={() => {
