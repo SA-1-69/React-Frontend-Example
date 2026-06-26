@@ -12,6 +12,7 @@ export type RegisterRequest = {
   password: string
   age?: number
   birth_day?: string
+  image_url?: string
   gender_id?: number
 }
 

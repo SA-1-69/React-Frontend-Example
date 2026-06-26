@@ -23,6 +23,7 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
 import CakeOutlinedIcon from '@mui/icons-material/CakeOutlined'
 import TransgenderOutlinedIcon from '@mui/icons-material/TransgenderOutlined'
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined'
+import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
 import { ApiError } from '../../services/https'
 import { ErrorAlert } from '../../components/ErrorAlert'
 import { useAuth } from '../../auth/useAuth'
@@ -145,7 +146,6 @@ export default function DashboardPage() {
             width: '100%',
           }}
         >
-          {/* Left side card - Summary */}
           <Box sx={{ minWidth: 0 }}>
             <Card
               variant="outlined"
@@ -166,6 +166,8 @@ export default function DashboardPage() {
                 }}
               >
                 <Avatar
+                  src={user.image_url}
+                  alt={`${user.first_name} ${user.last_name}`}
                   sx={{
                     width: 80,
                     height: 80,
@@ -224,7 +226,6 @@ export default function DashboardPage() {
             </Card>
           </Box>
 
-          {/* Right side card - Details */}
           <Box sx={{ minWidth: 0 }}>
             <Card
               variant="outlined"
@@ -336,6 +337,7 @@ function EditProfileDialog({
   const [lastName, setLastName] = useState(user.last_name)
   const [email, setEmail] = useState(user.email)
   const [password, setPassword] = useState('')
+  const [imageURL, setImageURL] = useState(user.image_url)
   const [birthDay, setBirthDay] = useState<string>(toDateOnly(user.birth_day))
   const [genderId, setGenderId] = useState<string>(user.gender_id ? String(user.gender_id) : '')
 
@@ -355,15 +357,17 @@ function EditProfileDialog({
     const passwordChanged = password.length >= 8
     const birthDayChanged = birthDay !== '' && birthDay !== toDateOnly(user.birth_day)
     const genderChanged = genderId !== '' && Number(genderId) !== (user.gender_id ?? 0)
+    const imageURLChanged = imageURL !== '' && imageURL !== user.image_url
     return (
       firstNameChanged ||
       lastNameChanged ||
       emailChanged ||
       passwordChanged ||
       birthDayChanged ||
-      genderChanged
+      genderChanged ||
+      imageURLChanged
     )
-  }, [user, firstName, lastName, email, password, birthDay, genderId])
+  }, [user, firstName, lastName, email, password, birthDay, genderId, imageURL])
 
   async function onSave() {
     setError(null)
@@ -377,7 +381,7 @@ function EditProfileDialog({
       const genderNumber = genderId === '' ? undefined : Number(genderId)
       const birthRfc3339 = birthDay === '' ? undefined : dateOnlyToRfc3339Utc(birthDay) ?? undefined
       const ageNumber = birthDay === '' ? undefined : computedAge
-
+      const imageURLValue = imageURL.trim()
       await updateProfile({
         first_name: firstNameValue || undefined,
         last_name: lastNameValue || undefined,
@@ -385,6 +389,7 @@ function EditProfileDialog({
         password: password || undefined,
         age: ageNumber !== undefined && Number.isFinite(ageNumber) ? ageNumber : undefined,
         birth_day: birthRfc3339,
+        image_url: imageURLValue || undefined,
         gender_id:
           genderNumber !== undefined && Number.isFinite(genderNumber) ? genderNumber : undefined,
       })
@@ -472,6 +477,14 @@ function EditProfileDialog({
             value={birthDay}
             onChange={(e) => setBirthDay(e.target.value)}
             slotProps={{ inputLabel: { shrink: true } }}
+            helperText="Optional"
+            fullWidth
+          />
+
+          <TextField
+            label="Image URL"
+            value={imageURL}
+            onChange={(e) => setImageURL(e.target.value)}
             helperText="Optional"
             fullWidth
           />

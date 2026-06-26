@@ -27,6 +27,7 @@ export default function RegisterPage() {
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [imageURL, setImageURL] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [birthDay, setBirthDay] = useState('')
   const [genderId, setGenderId] = useState<string>('')
@@ -78,6 +79,7 @@ export default function RegisterPage() {
         password,
         age: computedAge,
         birth_day: birthDay || undefined,
+        image_url: imageURL,
         gender_id:
           genderNumber !== undefined && Number.isFinite(genderNumber) ? genderNumber : undefined,
       })
@@ -213,6 +215,17 @@ export default function RegisterPage() {
                 <MenuItem value="3">อื่น ๆ</MenuItem>
               </TextField>
             </Box>
+            
+            <TextField
+              label="รูปภาพ URL"
+              type="text"
+              fullWidth
+              margin="dense"
+              value={imageURL}
+              onChange={(e) => setImageURL(e.target.value)}
+              autoComplete="image-url"
+              helperText="กรุณาใส่ URL ของรูปภาพ"
+            />
 
             <Button
               type="submit"
