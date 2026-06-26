@@ -13,6 +13,7 @@ export type RegisterRequest = {
   age?: number
   birth_day?: string
   gender_id?: number
+  address?: string
 }
 
 export type LoginRequest = {

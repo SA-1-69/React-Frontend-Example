@@ -26,6 +26,7 @@ export default function RegisterPage() {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
+  const [address, setAddress] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [birthDay, setBirthDay] = useState('')
@@ -38,8 +39,9 @@ export default function RegisterPage() {
       firstName.trim().length >= 2 &&
       lastName.trim().length >= 2 &&
       email.trim().length > 0 &&
+      address.trim().length >= 0 &&
       password.length >= 8,
-    [firstName, lastName, email, password],
+    [firstName, lastName, email, address, password],
   )
 
   const computedAge = useMemo(() => {
@@ -76,6 +78,7 @@ export default function RegisterPage() {
         last_name: lastName.trim(),
         email: email.trim(),
         password,
+        address: address.trim(),
         age: computedAge,
         birth_day: birthDay || undefined,
         gender_id:
@@ -141,7 +144,15 @@ export default function RegisterPage() {
               autoComplete="email"
               required
             />
-
+            <TextField
+              label="ที่อยู่"
+              fullWidth
+              margin="dense"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              autoComplete="address"
+              required
+            />
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, mt: 1 }}>
               <TextField
                 label="รหัสผ่าน"

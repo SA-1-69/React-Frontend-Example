@@ -23,6 +23,7 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
 import CakeOutlinedIcon from '@mui/icons-material/CakeOutlined'
 import TransgenderOutlinedIcon from '@mui/icons-material/TransgenderOutlined'
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined'
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 import { ApiError } from '../../services/https'
 import { ErrorAlert } from '../../components/ErrorAlert'
 import { useAuth } from '../../auth/useAuth'
@@ -293,6 +294,14 @@ export default function DashboardPage() {
                     </Box>
                     <Typography sx={{ fontWeight: '500' }}>{getGenderLabel(user.gender_id)}</Typography>
                   </Stack>
+
+                  <Stack spacing={0.5}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.secondary' }}>
+                      <LocationOnOutlinedIcon fontSize="small" />
+                      <Typography variant="body2">Address</Typography>
+                    </Box>
+                    <Typography sx={{ fontWeight: '500' }}>{user.address}</Typography>
+                  </Stack>
                 </Box>
 
                 <Divider sx={{ my: 4 }} />
@@ -335,6 +344,7 @@ function EditProfileDialog({
   const [firstName, setFirstName] = useState(user.first_name)
   const [lastName, setLastName] = useState(user.last_name)
   const [email, setEmail] = useState(user.email)
+  const [address, setAddress] = useState(user.address)
   const [password, setPassword] = useState('')
   const [birthDay, setBirthDay] = useState<string>(toDateOnly(user.birth_day))
   const [genderId, setGenderId] = useState<string>(user.gender_id ? String(user.gender_id) : '')
@@ -353,12 +363,14 @@ function EditProfileDialog({
     const lastNameChanged = lastName.trim().length >= 2 && lastName.trim() !== user.last_name
     const emailChanged = email.trim().length > 0 && email.trim() !== user.email
     const passwordChanged = password.length >= 8
+    const addressChanged = address.trim().length > 0 && address.trim() !== user.address
     const birthDayChanged = birthDay !== '' && birthDay !== toDateOnly(user.birth_day)
     const genderChanged = genderId !== '' && Number(genderId) !== (user.gender_id ?? 0)
     return (
       firstNameChanged ||
       lastNameChanged ||
       emailChanged ||
+      addressChanged ||
       passwordChanged ||
       birthDayChanged ||
       genderChanged
@@ -374,6 +386,7 @@ function EditProfileDialog({
       const firstNameValue = firstName.trim()
       const lastNameValue = lastName.trim()
       const emailValue = email.trim()
+      const addressValue = address.trim()
       const genderNumber = genderId === '' ? undefined : Number(genderId)
       const birthRfc3339 = birthDay === '' ? undefined : dateOnlyToRfc3339Utc(birthDay) ?? undefined
       const ageNumber = birthDay === '' ? undefined : computedAge
@@ -382,6 +395,7 @@ function EditProfileDialog({
         first_name: firstNameValue || undefined,
         last_name: lastNameValue || undefined,
         email: emailValue || undefined,
+        address: addressValue || undefined,
         password: password || undefined,
         age: ageNumber !== undefined && Number.isFinite(ageNumber) ? ageNumber : undefined,
         birth_day: birthRfc3339,
@@ -454,6 +468,13 @@ function EditProfileDialog({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            fullWidth
+          />
+          <TextField
+            label="Address"
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
             fullWidth
           />
           <TextField
