@@ -14,9 +14,15 @@ import {
   Stack,
   TextField,
   Typography,
+  Avatar,
 } from '@mui/material'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
+import CakeOutlinedIcon from '@mui/icons-material/CakeOutlined'
+import TransgenderOutlinedIcon from '@mui/icons-material/TransgenderOutlined'
+import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined'
 import { ApiError } from '../../services/https'
 import { ErrorAlert } from '../../components/ErrorAlert'
 import { useAuth } from '../../auth/useAuth'
@@ -59,9 +65,28 @@ function computeAgeFromDateOnly(dateOnly: string): number | undefined {
   return ageYears
 }
 
+function getGenderLabel(genderId: number | null): string {
+  if (genderId === 1) return 'Male'
+  if (genderId === 2) return 'Female'
+  if (genderId === 3) return 'Other'
+  return 'Not specified'
+}
+
+function formatDate(dateString: string | null): string {
+  if (!dateString) return 'Not specified'
+  try {
+    return new Date(dateString).toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  } catch {
+    return dateString
+  }
+}
+
 export default function DashboardPage() {
   const { user, deleteAccount } = useAuth()
-
   const [editOpen, setEditOpen] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [deleteBusy, setDeleteBusy] = useState(false)
@@ -70,11 +95,12 @@ export default function DashboardPage() {
     return <Alert severity="info">Loading profile…</Alert>
   }
 
+  const initials = `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase()
+
   async function onDelete() {
     if (!globalThis.confirm('Delete your account? This cannot be undone.')) return
     setDeleteError(null)
     setDeleteBusy(true)
-
     try {
       await deleteAccount()
     } catch (err) {
@@ -89,89 +115,213 @@ export default function DashboardPage() {
   }
 
   return (
-    <Stack spacing={2}>
-      <Typography variant="h5">My Profile</Typography>
+    <Box
+      sx={{
+        maxWidth: 1000,
+        mx: 'auto',
+        width: '100%',
+        py: { xs: 2, md: 4 },
+        display: 'flex',
+        justifyContent: 'center',
+      }}
+    >
+      <Stack spacing={3} sx={{ width: '100%', alignItems: 'center' }}>
+        <Box sx={{ width: '100%', textAlign: 'left' }}>
+          <Typography variant="h4" sx={{ fontWeight: '600', color: 'text.primary' }}>
+            Dashboard
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            Manage your account settings and personal details.
+          </Typography>
+        </Box>
 
-      <Card variant="outlined">
-        <CardContent>
-          <ErrorAlert message={deleteError} />
+        <ErrorAlert message={deleteError} />
 
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-              gap: 2,
-              mb: 2,
-            }}
-          >
-            <Box>
-              <Typography variant="body2" color="text.secondary">
-                First name
-              </Typography>
-              <Typography>{user.first_name}</Typography>
-            </Box>
-            <Box>
-              <Typography variant="body2" color="text.secondary">
-                Last name
-              </Typography>
-              <Typography>{user.last_name}</Typography>
-            </Box>
-            <Box>
-              <Typography variant="body2" color="text.secondary">
-                Email
-              </Typography>
-              <Typography>{user.email}</Typography>
-            </Box>
-            <Box>
-              <Typography variant="body2" color="text.secondary">
-                Age
-              </Typography>
-              <Typography>{user.age}</Typography>
-            </Box>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: '1fr 2fr' },
+            gap: 3,
+            width: '100%',
+          }}
+        >
+          {/* Left side card - Summary */}
+          <Box sx={{ minWidth: 0 }}>
+            <Card
+              variant="outlined"
+              sx={{
+                height: '100%',
+                borderRadius: 3,
+                borderColor: 'divider',
+                boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.03)',
+              }}
+            >
+              <CardContent
+                sx={{
+                  p: 4,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  textAlign: 'center',
+                }}
+              >
+                <Avatar
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    fontSize: '2rem',
+                    fontWeight: '600',
+                    background: 'linear-gradient(135deg, #3f51b5 0%, #0039cb 100%)',
+                    mb: 2,
+                    boxShadow: '0px 8px 16px rgba(63, 81, 181, 0.2)',
+                  }}
+                >
+                  {initials}
+                </Avatar>
+
+                <Typography variant="h6" sx={{ fontWeight: '600' }}>
+                  {user.first_name} {user.last_name}
+                </Typography>
+                <Typography variant="body2" sx={{ color: 'text.secondary', mb: 4 }}>
+                  {user.email}
+                </Typography>
+
+                <Stack spacing={1.5} sx={{ width: '100%' }}>
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    startIcon={<EditOutlinedIcon />}
+                    onClick={() => setEditOpen(true)}
+                    sx={{
+                      borderRadius: 2,
+                      py: 1,
+                      textTransform: 'none',
+                      fontWeight: '600',
+                      boxShadow: 'none',
+                      '&:hover': { boxShadow: 'none' },
+                    }}
+                  >
+                    Edit Profile
+                  </Button>
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    color="error"
+                    startIcon={<DeleteOutlineOutlinedIcon />}
+                    onClick={() => void onDelete()}
+                    disabled={deleteBusy}
+                    sx={{
+                      borderRadius: 2,
+                      py: 1,
+                      textTransform: 'none',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {deleteBusy ? 'Deleting…' : 'Delete Account'}
+                  </Button>
+                </Stack>
+              </CardContent>
+            </Card>
           </Box>
 
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            spacing={1}
-            sx={{ mb: 2, justifyContent: 'flex-end' }}
-          >
-            <Button
-              variant="contained"
-              startIcon={<EditOutlinedIcon />}
-              onClick={() => setEditOpen(true)}
-            >
-              Edit profile
-            </Button>
-            <Button
+          {/* Right side card - Details */}
+          <Box sx={{ minWidth: 0 }}>
+            <Card
               variant="outlined"
-              color="error"
-              startIcon={<DeleteOutlineOutlinedIcon />}
-              onClick={() => void onDelete()}
-              disabled={deleteBusy}
+              sx={{
+                borderRadius: 3,
+                borderColor: 'divider',
+                boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.03)',
+              }}
             >
-              {deleteBusy ? 'Deleting…' : 'Delete account'}
-            </Button>
-          </Stack>
+              <CardContent sx={{ p: 4 }}>
+                <Typography variant="h6" sx={{ fontWeight: '600', mb: 3 }}>
+                  Personal Information
+                </Typography>
 
-          <Divider sx={{ my: 2 }} />
-          <Typography variant="body2" color="text.secondary">
-            Created: {new Date(user.created_at).toLocaleString()}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Updated: {new Date(user.updated_at).toLocaleString()}
-          </Typography>
-        </CardContent>
-      </Card>
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                    gap: 3,
+                  }}
+                >
+                  <Stack spacing={0.5}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.secondary' }}>
+                      <PersonOutlineOutlinedIcon fontSize="small" />
+                      <Typography variant="body2">First Name</Typography>
+                    </Box>
+                    <Typography sx={{ fontWeight: '500' }}>{user.first_name}</Typography>
+                  </Stack>
 
-      {editOpen ? (
-        <EditProfileDialog
-          key={user.id}
-          open={editOpen}
-          user={user}
-          onClose={() => setEditOpen(false)}
-        />
-      ) : null}
-    </Stack>
+                  <Stack spacing={0.5}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.secondary' }}>
+                      <PersonOutlineOutlinedIcon fontSize="small" />
+                      <Typography variant="body2">Last Name</Typography>
+                    </Box>
+                    <Typography sx={{ fontWeight: '500' }}>{user.last_name}</Typography>
+                  </Stack>
+
+                  <Stack spacing={0.5}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.secondary' }}>
+                      <EmailOutlinedIcon fontSize="small" />
+                      <Typography variant="body2">Email Address</Typography>
+                    </Box>
+                    <Typography sx={{ fontWeight: '500' }}>{user.email}</Typography>
+                  </Stack>
+
+                  <Stack spacing={0.5}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.secondary' }}>
+                      <CakeOutlinedIcon fontSize="small" />
+                      <Typography variant="body2">Age</Typography>
+                    </Box>
+                    <Typography sx={{ fontWeight: '500' }}>{user.age} years old</Typography>
+                  </Stack>
+
+                  <Stack spacing={0.5}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.secondary' }}>
+                      <CalendarTodayOutlinedIcon fontSize="small" />
+                      <Typography variant="body2">Birth Day</Typography>
+                    </Box>
+                    <Typography sx={{ fontWeight: '500' }}>{formatDate(user.birth_day)}</Typography>
+                  </Stack>
+
+                  <Stack spacing={0.5}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.secondary' }}>
+                      <TransgenderOutlinedIcon fontSize="small" />
+                      <Typography variant="body2">Gender</Typography>
+                    </Box>
+                    <Typography sx={{ fontWeight: '500' }}>{getGenderLabel(user.gender_id)}</Typography>
+                  </Stack>
+                </Box>
+
+                <Divider sx={{ my: 4 }} />
+
+                <Stack
+                  direction={{ xs: 'column', sm: 'row' }}
+                  spacing={{ xs: 1, sm: 4 }}
+                  sx={{ color: 'text.secondary' }}
+                >
+                  <Typography variant="caption">
+                    Account Created: {new Date(user.created_at).toLocaleString()}
+                  </Typography>
+                  <Typography variant="caption">
+                    Last Updated: {new Date(user.updated_at).toLocaleString()}
+                  </Typography>
+                </Stack>
+              </CardContent>
+            </Card>
+          </Box>
+        </Box>
+      </Stack>
+
+      {/* ✅ EditProfileDialog */}
+      <EditProfileDialog
+        open={editOpen}
+        user={user}
+        onClose={() => setEditOpen(false)}
+      />
+    </Box>
   )
 }
 
@@ -253,8 +403,21 @@ function EditProfileDialog({
   }
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>Edit profile</DialogTitle>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth="sm"
+      slotProps={{
+        paper: {
+          sx: {
+            borderRadius: 3,
+            p: 1,
+          },
+        },
+      }}
+    >
+      <DialogTitle sx={{ fontWeight: '600' }}>Edit Profile</DialogTitle>
       <DialogContent>
         <ErrorAlert message={error} />
         {success ? (
@@ -267,8 +430,8 @@ function EditProfileDialog({
           sx={{
             display: 'grid',
             gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
-            gap: 2,
-            mt: 1,
+            gap: 2.5,
+            mt: 1.5,
           }}
         >
           <TextField
@@ -276,12 +439,14 @@ function EditProfileDialog({
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             required
+            fullWidth
           />
           <TextField
             label="Last name"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             required
+            fullWidth
           />
           <TextField
             label="Email"
@@ -289,6 +454,7 @@ function EditProfileDialog({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            fullWidth
           />
           <TextField
             label="Age"
@@ -297,6 +463,7 @@ function EditProfileDialog({
             disabled
             slotProps={{ htmlInput: { min: 0, max: 150 } }}
             helperText={birthDay === '' ? 'Age from profile' : 'Computed from birth day'}
+            fullWidth
           />
 
           <TextField
@@ -306,6 +473,7 @@ function EditProfileDialog({
             onChange={(e) => setBirthDay(e.target.value)}
             slotProps={{ inputLabel: { shrink: true } }}
             helperText="Optional"
+            fullWidth
           />
 
           <TextField
@@ -314,6 +482,7 @@ function EditProfileDialog({
             value={genderId}
             onChange={(e) => setGenderId(e.target.value)}
             helperText="Optional"
+            fullWidth
           >
             <MenuItem value="">Not specified</MenuItem>
             <MenuItem value="1">Male</MenuItem>
@@ -327,16 +496,31 @@ function EditProfileDialog({
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          sx={{ mt: 2 }}
+          sx={{ mt: 2.5 }}
           fullWidth
           helperText="Leave blank to keep current password (min 8 chars if set)"
         />
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose} disabled={saving}>
+        <Button
+          onClick={onClose}
+          disabled={saving}
+          sx={{ textTransform: 'none', fontWeight: '600' }}
+        >
           Cancel
         </Button>
-        <Button variant="contained" onClick={() => void onSave()} disabled={!canSave || saving}>
+        <Button
+          variant="contained"
+          onClick={() => void onSave()}
+          disabled={!canSave || saving}
+          sx={{
+            textTransform: 'none',
+            fontWeight: '600',
+            borderRadius: 2,
+            boxShadow: 'none',
+            '&:hover': { boxShadow: 'none' },
+          }}
+        >
           {saving ? 'Saving…' : 'Save changes'}
         </Button>
       </DialogActions>
